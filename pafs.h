@@ -13,13 +13,26 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
+#include <string.h>
+
 #define AF_ENDL "\n"
 
 #define AF_CAT(a, b) a ## b
 
+static inline const char *af_concat(const char *a, const char *b)
+{
+	static char buf[64];
+	size_t la = strlen(a);
+
+	memcpy(buf, a, la);
+	memcpy(buf + la, b, strlen(b));
+	return buf;
+}
+
 #define AF_GGEN(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -27,6 +40,7 @@
 #define AF_GGEN2(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -34,6 +48,7 @@
 #define AF_GGEN3(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -42,6 +57,7 @@
 #define AF_GGEN4(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -49,12 +65,14 @@
 #define AF_GGEN5(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
 
 #define AF_GGEN6(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
@@ -63,6 +81,7 @@
 #define AF_GGEN7(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -70,6 +89,7 @@
 #define AF_GGEN8(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -77,6 +97,15 @@
 #define AF_GGEN9(f, append, a, ...)				\
 	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
 		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
+		 const char * : f(append"%s", __VA_ARGS__),	\
+		 char * : f(append"%s", __VA_ARGS__)		\
+		)
+
+#define AF_GGEN10(f, append, a, ...)				\
+	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
+		 unsigned int : f(append"%u", __VA_ARGS__),	\
+		 long long : f(append"%ll", __VA_ARGS__),	\
 		 const char * : f(append"%s", __VA_ARGS__),	\
 		 char * : f(append"%s", __VA_ARGS__)		\
 		)
@@ -84,6 +113,7 @@
 #define AF_FMT_MOD1(append, v)				\
 	_Generic(v, int : append"%d",			\
 		 unsigned int : append"%u",		\
+		 long long : append"%ll",		\
 		 const char * : append"%s",		\
 		 char * : append"%s"			\
 		)
@@ -100,8 +130,9 @@
 #define AF_FMT_MOD5(append, ...)			\
 	AF_GGEN4(AF_FMT_MOD4, append, __VA_ARGS__)	\
 
-#define AF_FMT_MOD6(append, ...)			\
-	AF_GGEN5(AF_FMT_MOD5, append, __VA_ARGS__)	\
+#define AF_FMT_MOD6(append, a, b, c, ...)		\
+	af_concat(AF_FMT_MOD3(append, a, b, c),		\
+		  AF_FMT_MOD3("", __VA_ARGS__))		\
 
 #define AF_FMT_MOD7(append, ...)			\
 	AF_GGEN6(AF_FMT_MOD6, append, __VA_ARGS__)	\
@@ -115,6 +146,9 @@
 #define AF_FMT_MOD10(append, ...)			\
 	AF_GGEN9(AF_FMT_MOD9, append, __VA_ARGS__)	\
 
+#define AF_FMT_MOD11(append, ...)			\
+	AF_GGEN10(AF_FMT_MOD10, append, __VA_ARGS__)	\
+
 
 
 #define AF_FMT1(a) AF_FMT_MOD1("", a), a
@@ -125,7 +159,7 @@
 
 #define AF_FMT4(...) AF_FMT_MOD4("", __VA_ARGS__), __VA_ARGS__
 
-#define AF_FMT5(...) AF_FMT_MOD5("", __VA_ARGS__),  __VA_ARGS__
+#define AF_FMT5(...) AF_FMT_MOD5("", __VA_ARGS__), __VA_ARGS__
 
 #define AF_FMT6(...) AF_FMT_MOD6("", __VA_ARGS__), __VA_ARGS__
 
@@ -137,6 +171,8 @@
 
 #define AF_FMT10(...) AF_FMT_MOD10("", __VA_ARGS__), __VA_ARGS__
 
+#define AF_FMT11(...) AF_FMT_MOD11("", __VA_ARGS__), __VA_ARGS__
+
 
 #define AF_FMT_(nb, ...) AF_CAT(AF_FMT, nb) (__VA_ARGS__)	\
 
@@ -146,7 +182,6 @@
 #ifndef AF_PRINT_FUNC
 #define AF_PRINT_FUNC printf
 #endif
-
 
 #define AF_PRINT(...)				\
 	AF_PRINT_FUNC(AF_FMT(__VA_ARGS__))

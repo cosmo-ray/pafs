@@ -3,11 +3,11 @@
 
 int main(void)
 {
-	const char *name = "Joe";
-	printf(AF_FMT("hello\n"));
+	/* const char *name = "Joe"; */
+	/* printf(AF_FMT("hello\n")); */
 
-	printf(AF_FMT("hello my name is ", name, " I am ",
-		      22, " days old\n"));
+	/* printf(AF_FMT("hello my name is ", name, " I am ", */
+	/* 	      22, " days old\n")); */
 
 
 	AF_PRINT(1);
@@ -29,5 +29,7 @@ int main(void)
 	AF_PRINT(1, 2, 3, 4, 5, 6, 7, 8, 9);
 	AF_PRINT("\n");
 	AF_PRINT(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+	AF_PRINT("\n");
+	AF_PRINT(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 	AF_PRINT("\n");
 }
