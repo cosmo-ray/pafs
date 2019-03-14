@@ -1,14 +1,14 @@
-/**        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
- *                   Version 2, December 2004 
+/**        DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *                   Version 2, December 2004
  *
- * Copyright (C) 2019 Matthias Gatto <uso.cosmo.ray@gmail.com> 
+ * Copyright (C) 2019 Matthias Gatto <uso.cosmo.ray@gmail.com>
  *
- * Everyone is permitted to copy and distribute verbatim or modified 
- * copies of this license document, and changing it is allowed as long 
- * as the name is changed. 
+ * Everyone is permitted to copy and distribute verbatim or modified
+ * copies of this license document, and changing it is allowed as long
+ * as the name is changed.
  *
- *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE 
- *  TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION 
+ *            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+ *  TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
  *
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
@@ -19,165 +19,53 @@
 
 #define AF_CAT(a, b) a ## b
 
-static inline const char *af_concat(const char *a, const char *b)
-{
-	static char buf[64];
-	size_t la = strlen(a);
-
-	memcpy(buf, a, la);
-	memcpy(buf + la, b, strlen(b));
-	return buf;
-}
-
-#define AF_GGEN(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
-
-#define AF_GGEN2(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
-
-#define AF_GGEN3(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT1(v)					\
+ 	'%', _Generic(v, int : 'd',			\
+		      unsigned int : 'u',		\
+		      short : 'u',			\
+		      unsigned short : 'u',		\
+		      int (*)(void): 'p'		\
+		      long : 'l',			\
+		      void * : 'p',			\
+		      char : 'c',			\
+		      unsigned char : 'c',		\
+		      const char * : 's',		\
+		      char * : 's'			\
+		),
 
 
-#define AF_GGEN4(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT2(a, b) AF_FMT1(a) AF_FMT1(b)
 
-#define AF_GGEN5(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT3(a, b, c) AF_FMT2(a, b) AF_FMT1(c)
 
-#define AF_GGEN6(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT4(a, b, ...) AF_FMT2(a, b) AF_FMT2( __VA_ARGS__)
 
-#define AF_GGEN7(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT5(a, ...) AF_FMT1(a) AF_FMT4(__VA_ARGS__)
 
-#define AF_GGEN8(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT6(a, ...) AF_FMT1(a) AF_FMT5(__VA_ARGS__)
 
-#define AF_GGEN9(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT7(a, ...) AF_FMT1(a) AF_FMT6(__VA_ARGS__)
 
-#define AF_GGEN10(f, append, a, ...)				\
-	_Generic(a, int : f(append"%d", __VA_ARGS__),		\
-		 unsigned int : f(append"%u", __VA_ARGS__),	\
-		 long long : f(append"%ll", __VA_ARGS__),	\
-		 const char * : f(append"%s", __VA_ARGS__),	\
-		 char * : f(append"%s", __VA_ARGS__)		\
-		)
+#define AF_FMT8(a, ...) AF_FMT1(a) AF_FMT7(__VA_ARGS__)
 
-#define AF_FMT_MOD1(append, v)				\
-	_Generic(v, int : append"%d",			\
-		 unsigned int : append"%u",		\
-		 long long : append"%ll",		\
-		 const char * : append"%s",		\
-		 char * : append"%s"			\
-		)
+#define AF_FMT9(a, ...) AF_FMT1(a) AF_FMT8(__VA_ARGS__)
 
-#define AF_FMT_MOD2(append, ...)			\
-	AF_GGEN(AF_FMT_MOD1, append, __VA_ARGS__)
+#define AF_FMT10(a, ...) AF_FMT1(a) AF_FMT9(__VA_ARGS__)
 
-#define AF_FMT_MOD3(append, ...)			\
-	AF_GGEN2(AF_FMT_MOD2, append, __VA_ARGS__)	\
+#define AF_FMT11(a, ...) AF_FMT1(a) AF_FMT10(__VA_ARGS__)
 
-#define AF_FMT_MOD4(append, ...)			\
-	AF_GGEN3(AF_FMT_MOD3, append, __VA_ARGS__)	\
+#define AF_FMT12(a, ...) AF_FMT1(a) AF_FMT11(__VA_ARGS__)
 
-#define AF_FMT_MOD5(append, ...)			\
-	AF_GGEN4(AF_FMT_MOD4, append, __VA_ARGS__)	\
-
-#define AF_FMT_MOD6(append, a, b, c, ...)		\
-	af_concat(AF_FMT_MOD3(append, a, b, c),		\
-		  AF_FMT_MOD3("", __VA_ARGS__))		\
-
-#define AF_FMT_MOD7(append, ...)			\
-	AF_GGEN6(AF_FMT_MOD6, append, __VA_ARGS__)	\
-
-#define AF_FMT_MOD8(append, ...)			\
-	AF_GGEN7(AF_FMT_MOD7, append, __VA_ARGS__)	\
-
-#define AF_FMT_MOD9(append, ...)			\
-	AF_GGEN8(AF_FMT_MOD8, append, __VA_ARGS__)	\
-
-#define AF_FMT_MOD10(append, ...)			\
-	AF_GGEN9(AF_FMT_MOD9, append, __VA_ARGS__)	\
-
-#define AF_FMT_MOD11(append, ...)			\
-	AF_GGEN10(AF_FMT_MOD10, append, __VA_ARGS__)	\
-
-
-
-#define AF_FMT1(a) AF_FMT_MOD1("", a), a
-
-#define AF_FMT2(...) AF_FMT_MOD2("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT3(...) AF_FMT_MOD3("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT4(...) AF_FMT_MOD4("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT5(...) AF_FMT_MOD5("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT6(...) AF_FMT_MOD6("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT7(...) AF_FMT_MOD7("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT8(...) AF_FMT_MOD8("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT9(...) AF_FMT_MOD9("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT10(...) AF_FMT_MOD10("", __VA_ARGS__), __VA_ARGS__
-
-#define AF_FMT11(...) AF_FMT_MOD11("", __VA_ARGS__), __VA_ARGS__
+#define AF_FMT13(a, ...) AF_FMT1(a) AF_FMT12(__VA_ARGS__)
 
 
 #define AF_FMT_(nb, ...) AF_CAT(AF_FMT, nb) (__VA_ARGS__)	\
 
 #define AF_FMT(...)						\
-	AF_FMT_(AF_GET_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
+	(const char []) {					\
+	AF_FMT_(AF_GET_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)	\
+		0 } ,						\
+		__VA_ARGS__
 
 #ifndef AF_PRINT_FUNC
 #define AF_PRINT_FUNC printf
@@ -206,4 +94,4 @@ static inline const char *af_concat(const char *a, const char *b)
 	_38, _39, _40, _41, _42, _43, _44, _45, _46, _47,		\
 	_48, _49, _50, _51, _52, _53, _54, _55, _56, _57,		\
 	_58, _59, _60, _61, _62, _63, _64, _65, _66, _67,		\
-_68, _69, _70, count, ...) count
+	_68, _69, _70, count, ...) count
