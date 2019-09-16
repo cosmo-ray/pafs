@@ -13,26 +13,30 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
-#include <string.h>
+
+/* #include <string.h> */
 
 #define AF_ENDL "\n"
 
 #define AF_CAT(a, b) a ## b
 
-#define AF_FMT1(v)					\
- 	'%', _Generic(v, int : 'd',			\
-		      unsigned int : 'u',		\
-		      short : 'u',			\
-		      unsigned short : 'u',		\
-		      int (*)(void): 'p'		\
-		      long : 'l',			\
-		      void * : 'p',			\
-		      char : 'c',			\
-		      unsigned char : 'c',		\
-		      const char * : 's',		\
-		      char * : 's'			\
+#define AF_FMT1(v)				\
+ 	'%', _Generic(v, int : 'd',		\
+		      unsigned int : 'u',	\
+		      short : 'u',		\
+		      unsigned short : 'u',	\
+		      double : 'f',		\
+		      float : 'f',		\
+		      long : 'f',		\
+		      long long : 'f',		\
+		      unsigned long : 'f',	\
+		      unsigned long long : 'f',	\
+		      void * : 'p',		\
+		      char : 'c',		\
+		      unsigned char : 'c',	\
+		      const char * : 's',	\
+		      char * : 's'		\
 		),
-
 
 #define AF_FMT2(a, b) AF_FMT1(a) AF_FMT1(b)
 
@@ -61,11 +65,75 @@
 
 #define AF_FMT_(nb, ...) AF_CAT(AF_FMT, nb) (__VA_ARGS__)	\
 
-#define AF_FMT(...)						\
-	(const char []) {					\
-	AF_FMT_(AF_GET_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)	\
-		0 } ,						\
-		__VA_ARGS__
+static inline int __af_fuck_i(int l) {
+	return l;
+}
+
+static inline unsigned int __af_fuck_ui(unsigned int l) {
+	return l;
+}
+
+static inline double __af_fuck_l(long l) {
+	return l;
+}
+
+static inline double __af_fuck_ll(long long l) {
+	return l;
+}
+
+static inline double __af_fuck_lu(unsigned long l) {
+	return l;
+}
+
+static inline double __af_fuck_llu(unsigned long long l) {
+	return l;
+}
+
+static inline double __af_fuck_d(double l) {
+	return l;
+}
+
+static inline double __af_fuck_f(float f) {
+	return f;
+}
+
+static inline const char *__af_fuck_p(const void *p)
+{
+	return p;
+}
+
+#define AF_CAST1(X)					\
+	_Generic((X),					\
+		 default : __af_fuck_p,			\
+		 double: __af_fuck_d,			\
+		 float: __af_fuck_f,			\
+		 int : __af_fuck_i,			\
+		 unsigned int : __af_fuck_ui,		\
+		 long : __af_fuck_l,			\
+ 		 long long : __af_fuck_ll,		\
+		 unsigned long : __af_fuck_lu,		\
+		 unsigned long long : __af_fuck_llu) (X)
+
+#define AF_CAST2(a, b) AF_CAST1(a), AF_CAST1(b)
+#define AF_CAST3(a, ...) AF_CAST1(a), AF_CAST2(__VA_ARGS__)
+#define AF_CAST4(a, ...) AF_CAST1(a), AF_CAST3(__VA_ARGS__)
+#define AF_CAST5(a, ...) AF_CAST1(a), AF_CAST4(__VA_ARGS__)
+#define AF_CAST6(a, ...) AF_CAST1(a), AF_CAST5(__VA_ARGS__)
+#define AF_CAST7(a, ...) AF_CAST1(a), AF_CAST6(__VA_ARGS__)
+#define AF_CAST8(a, ...) AF_CAST1(a), AF_CAST7(__VA_ARGS__)
+#define AF_CAST9(a, ...) AF_CAST1(a), AF_CAST8(__VA_ARGS__)
+#define AF_CAST10(a, ...) AF_CAST1(a), AF_CAST9(__VA_ARGS__)
+#define AF_CAST11(a, ...) AF_CAST1(a), AF_CAST10(__VA_ARGS__)
+#define AF_CAST12(a, ...) AF_CAST1(a), AF_CAST11(__VA_ARGS__)
+#define AF_CAST13(a, ...) AF_CAST1(a), AF_CAST12(__VA_ARGS__)
+
+#define AF_CAST_(nb, ...) AF_CAT(AF_CAST, nb) (__VA_ARGS__)	\
+
+#define AF_FMT(...)							\
+	(const char []) {						\
+		AF_FMT_(AF_GET_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)	\
+			0 } ,						\
+		AF_CAST_(AF_GET_ARG_COUNT(__VA_ARGS__), __VA_ARGS__)
 
 #ifndef AF_PRINT_FUNC
 #define AF_PRINT_FUNC printf
